@@ -1,1 +1,1 @@
-# Modelo SIR utilizando difusion
+# SIR model based on diffusion
