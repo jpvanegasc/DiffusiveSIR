@@ -19,8 +19,8 @@ def main():
     plt.savefig("final.png")
     plt.close()
 
-    plt.plot(d.sigma[:, 0], d.sigma[:, 1], label='x')
-    plt.plot(d.sigma[:, 0], d.sigma[:, 2], label='y')
+    plt.plot(d.sigma[:, 0], d.sigma[:, 1], label="x")
+    plt.plot(d.sigma[:, 0], d.sigma[:, 2], label="y")
     plt.legend()
     plt.savefig("sigma.png")
     plt.close()
