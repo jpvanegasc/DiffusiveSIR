@@ -1,16 +1,22 @@
 import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
-from plot import plot_circle
+from plot import plot_particles
 
 
 def main():
-    d = DiffusiveSIR(1)
+    d = DiffusiveSIR(100)
+    
+    plot_particles(d.particles, d.L, d.L)
+    plt.scatter(5, 5, color="red")
+    plt.savefig("initial.png")
+    plt.close()
 
-    for p in d.particles:
-        plot_circle(d[0], p[1])
+    d.evolve(100)
 
-    plt.savefig("diffusion_results.py")
+    plt.scatter(5, 5, color="red")
+    plot_particles(d.particles, d.L, d.L)
+    plt.savefig("final.png")
     plt.close()
 
 
