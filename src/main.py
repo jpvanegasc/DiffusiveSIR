@@ -5,24 +5,19 @@ from plot import plot_particles
 
 
 def main():
-    d = DiffusiveSIR(100)
+    d = DiffusiveSIR(100, 20)
 
-    plot_particles(d.particles, d.L, d.L)
-    plt.scatter(5, 5, color="red")
+    colors = list(map(lambda h: d.get_health_color(h), d.health))
+    plot_particles(d.particles, d.L, d.L, color=colors)
+    # plt.scatter(5, 5, color="red")
     plt.savefig("initial.png")
     plt.close()
 
     d.evolve(100)
 
-    plt.scatter(5, 5, color="red")
-    plot_particles(d.particles, d.L, d.L)
+    colors = list(map(lambda h: d.get_health_color(h), d.health))
+    plot_particles(d.particles, d.L, d.L, color=colors)
     plt.savefig("final.png")
-    plt.close()
-
-    plt.plot(d.sigma[:, 0], d.sigma[:, 1], label="x")
-    plt.plot(d.sigma[:, 0], d.sigma[:, 2], label="y")
-    plt.legend()
-    plt.savefig("sigma.png")
     plt.close()
 
 
