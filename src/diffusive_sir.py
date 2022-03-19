@@ -33,11 +33,13 @@ class DiffusiveSIR(object):
         const = np.sqrt(2.0 * self.D * self.dt)
 
         for t in range(t_max):
-            for i in range(self.N):
-                self.particles[i, 0] += const * np.random.normal() + self.L
-                self.particles[i, 1] += const * np.random.normal() + self.L
-                self.particles[i, :] %= self.L
+            # Move with periodic boundaries
+            dx = const * np.random.normal(size=(self.N, 2))
+            self.particles += dx + self.L
+            self.particles %= self.L
 
+            # Calculate standard deviation
             sigma_x, sigma_y = np.std(self.particles, axis=0)
             self.sigma.append([self.dt * t, sigma_x, sigma_y])
+
         self.sigma = np.array(self.sigma)
