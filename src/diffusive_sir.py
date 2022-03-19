@@ -20,9 +20,10 @@ class DiffusiveSIR(object):
         self.particles = self.L * np.random.rand(self.N, 2)
 
     def evolve(self, t_max: int):
+        const = np.sqrt(2.0 * self.D * self.dt)
+
         for t in range(t_max):
             for i in range(self.N):
-                self.particles[i, :] += (
-                    np.sqrt(2.0 * self.D * self.dt) * np.random.normal() + self.L
-                )
+                self.particles[i, 0] += const * np.random.normal() + self.L
+                self.particles[i, 1] += const * np.random.normal() + self.L
                 self.particles[i, :] %= self.L
