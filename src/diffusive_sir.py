@@ -18,8 +18,10 @@ class DiffusiveSIR(object):
         2: "yellow",  # recovered
     }
 
-    def __init__(self, N: int, infected: float):
+    def __init__(self, N: int, infected: float, density: float):
         self.N = N
+        self.L = np.sqrt(N / density)
+
         self.particles = np.zeros((N, 2))
         self.health = np.zeros(N, dtype=int)
 
