@@ -2,10 +2,6 @@ import numpy as np
 
 
 class DiffusiveSIR(object):
-    N = 0
-    initial = None
-    particles = None
-    health = None
     health_time = {}
     sigma = []
     D = 100
@@ -22,13 +18,13 @@ class DiffusiveSIR(object):
         2: "yellow",  # recovered
     }
 
-    def __init__(self, N: int, infected: int):
+    def __init__(self, N: int, infected: float):
         self.N = N
         self.particles = np.zeros((N, 2))
         self.health = np.zeros(N, dtype=int)
 
         self.initial_position()
-        self.infect(infected)
+        self.infect(int(N * infected))
 
     def initial_position(self):
         self.particles = self.L * np.random.rand(self.N, 2)
