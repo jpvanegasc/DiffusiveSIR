@@ -4,6 +4,9 @@ import numpy as np
 class DiffusiveSIR(object):
     health_time = {}
     sigma = []
+    healthy = []
+    sick = []
+    recovered = []
     D = 100
     t0 = 0.1
     dt = 0.01
@@ -84,8 +87,13 @@ class DiffusiveSIR(object):
 
             self.check_recovered()
 
-            sigma_x, sigma_y = np.std(self.particles, axis=0)
-            self.sigma.append([self.dt * t, sigma_x, sigma_y])
+            # Commented because an if is computationally expensive
+            # sigma_x, sigma_y = np.std(self.particles, axis=0)
+            # self.sigma.append([self.dt * t, sigma_x, sigma_y])
+
+            self.healthy.append([t, sum(map(lambda x: x == 0, self.health))])
+            self.sick.append([t, sum(map(lambda x: x == 1, self.health))])
+            self.recovered.append([t, sum(map(lambda x: x == 2, self.health))])
 
             progress = int(50 * t / t_max)
             missing = int(50 - progress)
@@ -94,3 +102,6 @@ class DiffusiveSIR(object):
         print(f"0% [{'#'*50}] 100%")
 
         self.sigma = np.array(self.sigma)
+        self.healthy = np.array(self.healthy)
+        self.sick = np.array(self.sick)
+        self.recovered = np.array(self.recovered)
