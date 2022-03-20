@@ -20,7 +20,7 @@ def main():
     plt.close()
 
     plt.plot(d.healthy[:, 0], d.healthy[:, 1], color="green")
-    plt.plot(d.sick[:, 0], d.sick[:, 1], color="red")
+    plt.plot(d.infected[:, 0], d.infected[:, 1], color="red")
     plt.plot(d.recovered[:, 0], d.recovered[:, 1], color="yellow")
     plt.savefig("../data/sir.png")
     plt.close()
