@@ -48,7 +48,7 @@ class DiffusiveSIR(object):
 
     def check_infected(self):
         for i in range(self.N):
-            if self.health[i] == 1:  # Already infected
+            if self.health[i] != 0:  # Already infected
                 continue
 
             for j in range(i + 1, self.N):
@@ -87,7 +87,7 @@ class DiffusiveSIR(object):
 
             self.check_recovered()
 
-            # Commented because an if is computationally expensive
+            # Commented because an 'if' is computationally expensive
             # sigma_x, sigma_y = np.std(self.particles, axis=0)
             # self.sigma.append([self.dt * t, sigma_x, sigma_y])
 
