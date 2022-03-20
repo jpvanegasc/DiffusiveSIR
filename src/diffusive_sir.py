@@ -85,4 +85,10 @@ class DiffusiveSIR(object):
             sigma_x, sigma_y = np.std(self.particles, axis=0)
             self.sigma.append([self.dt * t, sigma_x, sigma_y])
 
+            progress = int(50 * t / t_max)
+            missing = int(50 - progress)
+            print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
+
+        print(f"0% [{'#'*50}] 100%")
+
         self.sigma = np.array(self.sigma)
