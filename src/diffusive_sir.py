@@ -16,9 +16,9 @@ class DiffusiveSIR(object):
     infected_prob = 0.2
 
     mapping = {
-        0: "black",  # susceptible
-        1: "red",  # infected
-        2: "yellow",  # recovered
+        0: "darkgreen",  # susceptible
+        1: "darkred",  # infected
+        2: "orange",  # recovered
     }
 
     def __init__(self, N: int, infected: float, density: float):

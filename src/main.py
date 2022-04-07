@@ -2,32 +2,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
-from plot import plot_particles
+from plot import plot_timestep
 
 
 def main(N, t_max):
     d = DiffusiveSIR(N, 0.01, 0.012)
 
-    colors = list(map(lambda h: d.get_health_color(h), d.particles[:, 2]))
-    plot_particles(d.particles, d.L, d.L, color=colors)
-    plt.savefig("../data/initial.png")
-    plt.close()
+    # Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
+    marker_size = 23 * np.exp(-0.0005 * N) + 7
+
+    plot_timestep(d, "../data/initial.png", "m", "m", "initial positions", marker_size)
 
     d.evolve(t_max)
 
-    colors = list(map(lambda h: d.get_health_color(h), d.particles[:, 2]))
-    plot_particles(d.particles, d.L, d.L, color=colors)
-    plt.savefig("../data/final.png")
-    plt.close()
+    plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
 
-    t = np.arange(t_max)
+    t = d.dt * np.arange(t_max)
 
-    plt.plot(t, d.sir[:, 0], color="green")
-    plt.plot(t, d.sir[:, 1], color="red")
-    plt.plot(t, d.sir[:, 2], color="yellow")
+    plt.plot(t, d.sir[:, 0], color="darkgreen")
+    plt.plot(t, d.sir[:, 1], color="darkred")
+    plt.plot(t, d.sir[:, 2], color="orange")
+    plt.xlabel("$t$ (days)")
+    plt.ylabel("Population")
     plt.savefig("../data/sir.png")
     plt.close()
 
 
 if __name__ == "__main__":
-    main(1000, 1000)
+    main(100, 9000)
