@@ -6,13 +6,10 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 100
-    t0 = 0.1
-    dt = 0.01
-    L = 10.0
-
-    recovery_time = 1.0
-    infected_distance = 2.0
+    D = 100  # m2/day
+    dt = 0.01  # day
+    recovery_time = 14.0  # day
+    infected_distance = 2.0  # m
     infected_prob = 0.2
 
     mapping = {
@@ -25,7 +22,7 @@ class DiffusiveSIR(object):
         self.N = N
         self.L = np.sqrt(N / density)
 
-        self.particles = np.zeros((N, 3))
+        self.particles = np.zeros((N, 3))  # (x,y,health)
 
         self.initial_position()
         self.infect(int(N * infected))
