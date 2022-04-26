@@ -72,7 +72,7 @@ class DiffusiveSIR(object):
                 norm = np.linalg.norm(self.particles[i, :2] - self.particles[j, :2])
                 r = np.random.random()
 
-                if norm <= self.infected_distance and r > self.infected_prob:
+                if norm <= self.infected_distance and r <= self.infected_prob:
                     self.particles[i, 2] = 1
                     self.health_time[i] = 0.0
                     break
