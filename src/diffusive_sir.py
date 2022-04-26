@@ -108,7 +108,7 @@ class DiffusiveSIR(object):
 
             # Commented because an 'if' is computationally expensive
             sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
-            self.sigma.append([self.dt * t, sigma_x, sigma_y])
+            self.sigma.append([self.dt * t, np.sqrt(sigma_x**2 + sigma_y**2)])
 
             # self.sir[t] = [len(s), len(i), len(r)]
 

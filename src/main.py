@@ -35,27 +35,18 @@ def main(N, t_max):
     linear = lambda x, a: a * x
 
     sigma_start = 0
-    sigma_end = 600
+    sigma_end = 500
 
-    c_x = opt.curve_fit(
+    c = opt.curve_fit(
         linear, d.sigma[sigma_start:sigma_end, 0], d.sigma[sigma_start:sigma_end, 1], 1
     )
-    c_y = opt.curve_fit(
-        linear, d.sigma[sigma_start:sigma_end, 0], d.sigma[sigma_start:sigma_end, 2], 1
-    )
 
     plt.plot(
         d.sigma[sigma_start:sigma_end, 0],
-        linear(d.sigma[sigma_start:sigma_end, 0], c_x[0]),
-        label="x fit",
+        linear(d.sigma[sigma_start:sigma_end, 0], c[0]),
+        label=f"$y={float(c[0]):.2f}x$",
     )
-    plt.plot(
-        d.sigma[sigma_start:sigma_end, 0],
-        linear(d.sigma[sigma_start:sigma_end, 0], c_y[0]),
-        label="y fit",
-    )
-    plt.plot(d.sigma[:, 0], d.sigma[:, 1], label="x")
-    plt.plot(d.sigma[:, 0], d.sigma[:, 2], label="y")
+    plt.plot(d.sigma[:, 0], d.sigma[:, 1])#, label="x")
     plt.legend()
     plt.xlabel(r"$t$")
     plt.ylabel(r"$\sigma$ (m)")
@@ -64,4 +55,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(1000, 100)
+    main(1000, 80)
