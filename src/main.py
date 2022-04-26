@@ -6,7 +6,10 @@ from plot import plot_timestep
 
 
 def main(N, t_max):
+    """N number of individuals, t_max in days"""
     d = DiffusiveSIR(N, 0.01, 0.012)
+
+    t_max = int(t_max/d.dt)
 
     # Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
     marker_size = 23 * np.exp(-0.0005 * N) + 7
