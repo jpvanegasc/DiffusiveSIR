@@ -6,15 +6,16 @@ from plot import plot_timestep
 
 
 def main(N, t_max):
-    """Run the simulation. N number of individuals, t_max number of days"""
+    """N number of individuals, t_max in days"""
     d = DiffusiveSIR(N, 0.01, 0.012)
+
+    t_max = int(t_max/d.dt)
 
     # Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
     marker_size = 23 * np.exp(-0.0005 * N) + 7
 
     plot_timestep(d, "../data/initial.png", "m", "m", "initial positions", marker_size)
 
-    t_max = int(t_max / d.dt)
     d.evolve(t_max)
 
     plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
@@ -29,30 +30,6 @@ def main(N, t_max):
     plt.savefig("../data/sir.png")
     plt.close()
 
-    # Measure diffusion constant for the first 5 days
-    import scipy.optimize as opt
-
-    linear = lambda x, a: a * x
-
-    sigma_start = 0
-    sigma_end = 500
-
-    c = opt.curve_fit(
-        linear, d.sigma[sigma_start:sigma_end, 0], d.sigma[sigma_start:sigma_end, 1], 1
-    )
-
-    plt.plot(
-        d.sigma[sigma_start:sigma_end, 0],
-        linear(d.sigma[sigma_start:sigma_end, 0], c[0]),
-        label=f"$y={float(c[0]):.2f}x$",
-    )
-    plt.plot(d.sigma[:, 0], d.sigma[:, 1])#, label="x")
-    plt.legend()
-    plt.xlabel(r"$t$")
-    plt.ylabel(r"$\sigma$ (m)")
-    plt.savefig("../data/sigma.png")
-    plt.close()
-
 
 if __name__ == "__main__":
-    main(1000, 80)
+    main(100, 9000)
