@@ -29,4 +29,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(100, 9000)
+    main(1000, 9000)
