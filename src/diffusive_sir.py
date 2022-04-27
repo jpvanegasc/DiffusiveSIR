@@ -63,7 +63,7 @@ class DiffusiveSIR(object):
                 norm = np.linalg.norm(self.particles[i, :2] - self.particles[j, :2])
                 r = np.random.random()
 
-                if norm <= self.infected_distance and r > self.infected_prob:
+                if norm <= self.infected_distance and r <= self.infected_prob:
                     self.particles[i, 2] = 1
                     self.health_time[i] = 0.0
                     break
@@ -79,13 +79,14 @@ class DiffusiveSIR(object):
                 self.health_time.pop(i)
 
     def evolve(self, t_max: int):
-        const = np.sqrt(2.0 * self.D * self.dt)
+        mu, sigma = 0.0, 2.0 * self.D * self.dt
+        const = np.sqrt(sigma)
 
         self.sir = np.zeros((t_max, 3))
 
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2))
+            dx = const * np.random.normal(mu, sigma, size=(self.N, 2))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
@@ -97,8 +98,8 @@ class DiffusiveSIR(object):
             self.check_recovered()
 
             # Commented because an 'if' is computationally expensive
-            # sigma_x, sigma_y = np.std(self.particles, axis=0)
-            # self.sigma.append([self.dt * t, sigma_x, sigma_y])
+            # sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
+            # self.sigma.append([self.dt * t, np.sqrt(sigma_x**2 + sigma_y**2)])
 
             self.sir[t] = [len(s), len(i), len(r)]
 
