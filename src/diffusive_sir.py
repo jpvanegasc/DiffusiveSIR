@@ -6,7 +6,8 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 10  """why 10 and not 100?"""# m2/day 
+    """why 10 and not 100?"""
+    D = 10 # m2/day
     dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
@@ -86,9 +87,12 @@ class DiffusiveSIR(object):
 
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(mu, sigma, size=(self.N, 2))
+            dx = const * np.random.normal(size=(self.N, 2))
+            #dy = const * np.random.normal(size=(self.N, 2))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
+            # self.particles[:, 1:2] += dy + self.L
+            # self.particles[:, 1:2] %= self.L
 
             s, i, r = self.get_indices_by_health()
 
