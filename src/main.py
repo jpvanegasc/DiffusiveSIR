@@ -32,4 +32,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(1000, 9000)
+    main(100, 40)

@@ -6,7 +6,7 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 10  # m2/day
+    D = 50  # m2/day
     dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
