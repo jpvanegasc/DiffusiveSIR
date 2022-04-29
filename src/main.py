@@ -2,20 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
-from plot import plot_timestep
+from plot import plot_timestep, save_2d_array
 
 
 def main(N, t_max):
-    """N number of individuals, t_max in days"""
+    """Run the simulation. N number of individuals, t_max number of days"""
     d = DiffusiveSIR(N, 0.01, 0.012)
-
-    t_max = int(t_max/d.dt)
 
     # Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
     marker_size = 23 * np.exp(-0.0005 * N) + 7
 
     plot_timestep(d, "../data/initial.png", "m", "m", "initial positions", marker_size)
 
+    t_max = int(t_max / d.dt)
     d.evolve(t_max)
 
     plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
@@ -32,4 +31,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(100, 9000)
+    main(100, 90)
