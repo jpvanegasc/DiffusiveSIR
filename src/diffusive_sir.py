@@ -1,13 +1,14 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
+from plot import plot_particles
 
 class DiffusiveSIR(object):
     health_time = {}
     sigma = []
     sir = []
 
-    """why 10 and not 100?"""
-    D = 10 # m2/day
+    D = 100 # m2/day
     dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
@@ -79,16 +80,40 @@ class DiffusiveSIR(object):
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
 
+    def plot_timestep(self, filename: str , xlabel: str, ylabel: str, title: str, size=10):
+        colors = list(
+            map(lambda h: self.get_health_color(h), self.particles[:, 2])
+        )
+        plot_particles(
+            self.particles,
+            self.L,
+            self.L,
+            color=colors,
+            size=size,
+        )
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.savefig(filename)
+        plt.close()
+
     def evolve(self, t_max: int):
         mu, sigma = 0.0, 2.0 * self.D * self.dt
         const = np.sqrt(sigma)
 
         self.sir = np.zeros((t_max, 3))
+        marker_size = 23 * np.exp(-0.0005 * self.N) + 7
 
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2))
-            #dy = const * np.random.normal(size=(self.N, 2))
+            """if t%4 == 0 :   #create the gif of spread infection
+                t1 = t * self.dt
+                t2 = t + 100000
+                self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
+            """
+            Daniel = 2*np.sqrt(np.pi)
+            dx = const * np.random.normal(size=(self.N, 2))*(1/Daniel)
+            #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
             # self.particles[:, 1:2] += dy + self.L

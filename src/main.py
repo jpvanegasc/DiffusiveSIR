@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
 from plot import plot_timestep
+from plot import make_gif
 
 
 def main(N, t_max):
@@ -20,6 +21,9 @@ def main(N, t_max):
 
     plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
 
+    #print("Wait a minute.... GIF in process...")
+    #make_gif('../data/gif/' , '../data/spread.gif')
+
     t = d.dt * np.arange(t_max)
 
     plt.plot(t, d.sir[:, 0], color="darkgreen")
@@ -32,4 +36,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(100, 40)
+    main(100, 45)
