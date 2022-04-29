@@ -6,8 +6,8 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 100  # m2/day
-    dt = 0.01  # day
+    D = 50  # m2/day
+    dt = 0.005  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
     infected_prob = 0.2
@@ -28,7 +28,16 @@ class DiffusiveSIR(object):
         self.infect(int(N * infected))
 
     def initial_position(self):
-        self.particles[:, :2] = self.L * np.random.rand(self.N, 2)
+        # self.particles[:, :2] = self.L * np.random.rand(self.N, 2)
+        self.particles[:, :2] = np.array(
+            [
+                [
+                    0.5 * self.L + 0.5 * np.random.random(),
+                    0.5 * self.L + 0.5 * np.random.random(),
+                ]
+                for _ in range(self.N)
+            ]
+        )
 
     def infect(self, infected: int):
         for _ in range(infected):
@@ -79,8 +88,7 @@ class DiffusiveSIR(object):
                 self.health_time.pop(i)
 
     def evolve(self, t_max: int):
-        mu, sigma = 0.0, 2.0 * self.D * self.dt
-        const = np.sqrt(sigma)
+        const = np.sqrt(2.0 * self.D * self.dt)
 
         self.sir = np.zeros((t_max, 3))
 
@@ -90,18 +98,18 @@ class DiffusiveSIR(object):
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
-            s, i, r = self.get_indices_by_health()
+            # s, i, r = self.get_indices_by_health()
 
-            self.check_infected(s, i)
-            self.add_infected_time()
+            # self.check_infected(s, i)
+            # self.add_infected_time()
 
-            self.check_recovered()
+            # self.check_recovered()
 
             # Commented because an 'if' is computationally expensive
-            # sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
-            # self.sigma.append([self.dt * t, np.sqrt(sigma_x**2 + sigma_y**2)])
+            sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
+            self.sigma.append([self.dt * t, sigma_x**2 + sigma_y**2])
 
-            self.sir[t] = [len(s), len(i), len(r)]
+            # self.sir[t] = [len(s), len(i), len(r)]
 
             progress = int(50 * t / t_max)
             missing = int(50 - progress)
