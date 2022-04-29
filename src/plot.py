@@ -34,3 +34,11 @@ def plot_timestep(diffusive_sir, filename, xlabel="", ylabel="", title="", size=
     plt.ylabel(ylabel)
     plt.savefig(filename)
     plt.close()
+
+
+def save_2d_array(array: np.array, filename, header=None):
+    with open(filename, "w+") as f:
+        if header:
+            f.write(header.strip() + "\n")
+        for line in array:
+            f.write(",".join(map(lambda x: str(x), line)) + "\n")
