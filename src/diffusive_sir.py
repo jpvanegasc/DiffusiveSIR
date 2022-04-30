@@ -48,16 +48,19 @@ class DiffusiveSIR(object):
         susceptible = []
         infected = []
         recovered = []
+        sick = []
 
         for i in range(self.N):
             if self.particles[i, 2] == 0:
                 susceptible.append(i)
             elif self.particles[i, 2] == 1:
                 infected.append(i)
+                sick.append(i)
             else:
                 recovered.append(i)
+                sick.append(i)
 
-        return susceptible, infected, recovered
+        return susceptible, infected, recovered , sick
 
     def check_infected(self, susceptible, infected):
         for i in susceptible:  # Only susceptible can get infected
@@ -100,18 +103,19 @@ class DiffusiveSIR(object):
     def evolve(self, t_max: int):
         mu, sigma = 0.0, 2.0 * self.D * self.dt
         const = np.sqrt(sigma)
+        Daniel = 2 * np.sqrt(np.pi)
 
-        self.sir = np.zeros((t_max, 3))
-        marker_size = 23 * np.exp(-0.0005 * self.N) + 7
+        self.sir = np.zeros((t_max, 4))
+        #marker_size = 23 * np.exp(-0.0005 * self.N) + 7
 
         for t in range(t_max):
             # Move with periodic boundaries
-            """if t%4 == 0 :   #create the gif of spread infection
+            """
+            if t%4 == 0 :   #create the gif of infection spread
                 t1 = t * self.dt
                 t2 = t + 100000
                 self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
             """
-            Daniel = 2*np.sqrt(np.pi)
             dx = const * np.random.normal(size=(self.N, 2))*(1/Daniel)
             #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
@@ -119,7 +123,7 @@ class DiffusiveSIR(object):
             # self.particles[:, 1:2] += dy + self.L
             # self.particles[:, 1:2] %= self.L
 
-            s, i, r = self.get_indices_by_health()
+            s, i, r, ns = self.get_indices_by_health()
 
             self.check_infected(s, i)
             self.add_infected_time()
@@ -130,7 +134,7 @@ class DiffusiveSIR(object):
             # sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
             # self.sigma.append([self.dt * t, np.sqrt(sigma_x**2 + sigma_y**2)])
 
-            self.sir[t] = [len(s), len(i), len(r)]
+            self.sir[t] = [len(s), len(i), len(r), len(ns)]
 
             progress = int(50 * t / t_max)
             missing = int(50 - progress)

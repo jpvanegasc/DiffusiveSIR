@@ -29,6 +29,7 @@ def main(N, t_max):
     plt.plot(t, d.sir[:, 0], color="darkgreen")
     plt.plot(t, d.sir[:, 1], color="darkred")
     plt.plot(t, d.sir[:, 2], color="orange")
+    plt.plot(t, d.sir[:, 3], color="pink")
     plt.xlabel("$t$ (days)")
     plt.ylabel("Population")
     plt.savefig("../data/sir.png")
