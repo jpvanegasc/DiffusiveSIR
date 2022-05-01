@@ -46,16 +46,18 @@ class DiffusiveSIR(object):
         susceptible = []
         infected = []
         recovered = []
-
+        sick = []
         for i in range(self.N):
             if self.particles[i, 2] == 0:
                 susceptible.append(i)
             elif self.particles[i, 2] == 1:
                 infected.append(i)
+                sick.append(i)
             else:
                 recovered.append(i)
+                sick.append(i)
 
-        return susceptible, infected, recovered
+        return susceptible, infected, recovered, sick
 
     def check_infected(self, susceptible, infected):
         for i in susceptible:  # Only susceptible can get infected
@@ -82,15 +84,15 @@ class DiffusiveSIR(object):
         sigma = 2.0 * self.D * self.dt
         const = np.sqrt(sigma)
 
-        self.sir = np.zeros((t_max, 3))
+        self.sir = np.zeros((t_max, 4))
         daniel = 1/(np.sqrt(4*np.pi*self.D*self.dt))
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2)) * 0.3
+            dx = const * np.random.normal(size=(self.N, 2)) *0.35
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
-            s, i, r = self.get_indices_by_health()
+            s, i, r, ns = self.get_indices_by_health()
 
             self.check_infected(s, i)
             self.add_infected_time()
@@ -101,7 +103,7 @@ class DiffusiveSIR(object):
             # sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
             # self.sigma.append([self.dt * t, np.sqrt(sigma_x**2 + sigma_y**2)])
 
-            self.sir[t] = [len(s), len(i), len(r)]
+            self.sir[t] = [len(s), len(i), len(r), len(ns)]
 
             progress = int(50 * t / t_max)
             missing = int(50 - progress)

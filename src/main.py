@@ -26,6 +26,7 @@ def main(N, t_max):
     plt.plot(t, d.sir[:, 0], color="darkgreen")
     plt.plot(t, d.sir[:, 1], color="darkred")
     plt.plot(t, d.sir[:, 2], color="orange")
+    plt.plot(t, d.sir[:,3],color="pink")
     plt.xlabel("$t$ (days)")
     plt.ylabel("Population")
     plt.savefig("../data/sir.png")
@@ -36,18 +37,22 @@ if __name__ == "__main__":
     sprom= np.zeros(9000)
     iprom= np.zeros(9000)
     rprom = np.zeros(9000)
-    j = 50
+    sickprom = np.zeros(9000)
+    j = 10
     for i in range (j):
         x, y = main(100, 90)
         sprom += x[:,0]
         iprom += x[:,1]
         rprom += x[:,2]
+        sickprom += x[:,3]
     sprom = sprom/j 
     iprom = iprom/j
     rprom = rprom/j
+    sickprom = sickprom/j
     plt.plot(y,sprom, color = "black")
     plt.plot(y,iprom, color = "cyan")
     plt.plot(y,rprom, color = "magenta")
+    plt.plot(y, sickprom, color ="green")
     plt.xlabel("$t$ días")
     plt.ylabel("Poblacion promedio")
     plt.savefig("../data/prom.png")
