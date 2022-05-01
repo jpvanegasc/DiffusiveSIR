@@ -5,6 +5,7 @@ from diffusive_sir import DiffusiveSIR
 from plot import plot_timestep
 
 
+
 def main(N, t_max):
     """N number of individuals, t_max in days"""
     d = DiffusiveSIR(N, 0.01, 0.012)
@@ -32,4 +33,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(1000, 40)
+    main(100, 50)

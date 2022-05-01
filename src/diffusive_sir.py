@@ -6,7 +6,7 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 50  # m2/day
+    D = 100  # m2/day
     dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
@@ -79,14 +79,14 @@ class DiffusiveSIR(object):
                 self.health_time.pop(i)
 
     def evolve(self, t_max: int):
-        mu, sigma = 0.0, 2.0 * self.D * self.dt
+        sigma = 2.0 * self.D * self.dt
         const = np.sqrt(sigma)
 
         self.sir = np.zeros((t_max, 3))
-
+        daniel = 1/(np.sqrt(4*np.pi*self.D*self.dt))
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2))
+            dx = const * np.random.normal(size=(self.N, 2)) *daniel
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
