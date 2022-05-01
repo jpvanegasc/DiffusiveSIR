@@ -86,7 +86,7 @@ class DiffusiveSIR(object):
         daniel = 1/(np.sqrt(4*np.pi*self.D*self.dt))
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2)) *daniel
+            dx = const * np.random.normal(size=(self.N, 2)) * 0.3
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
