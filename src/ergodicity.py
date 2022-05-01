@@ -74,9 +74,11 @@ print(eMSD)
 err = abs(tMSD - eMSD)/(tMSD)
 print("error = ", err)
 
+plt.figure(1)
 plt.scatter(R0[:,0], R0[:,1],  color = "red" , label = 'Initial' )
 plt.scatter(RN[:,0], RN[:,1], color = "green" , label = 'Final' )
 
+plt.figure(2)
 plt.plot(RX, RY, color='cyan', label='Camino aleatorio')
 plt.legend()
 plt.show()
