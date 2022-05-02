@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
 from plot import plot_timestep
-
+from plot import fit
 
 
 def main(N, t_max):
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     iprom= np.zeros(9000)
     rprom = np.zeros(9000)
     sickprom = np.zeros(9000)
-    j = 5
+    j = 10
     for _ in range (j):
         x, y = main(100, 90)
         sprom += x[:,0]
@@ -55,21 +55,7 @@ if __name__ == "__main__":
     plt.plot(y, sickprom, color ="green")
     plt.xlabel("$t$ días")
     plt.ylabel("Poblacion promedio")
-    plt.yscale("log")
     plt.savefig("../data/prom.png")
     plt.close()
     plt.yscale("log")
-    l = y[:1001]
-    l1 = sickprom[:1001]
-    m = []
-    fit = np. polyfit (l, np.log (l1), 1)
-    l= y[:1001]
-    print(fit)
-    for i in range (1001):
-        m.append( np.exp(fit[1] + fit[0]*l[i]))
-    #l = y[:1001]
-   
-    plt.plot(l, m, color ="red")
-    plt.plot(y,sickprom,color="green")
-    plt.savefig("../data/fit.png")
-    plt.close()
+    fit (y,sickprom)
