@@ -5,7 +5,7 @@ from diffusive_sir import DiffusiveSIR
 from plot import plot_timestep, save_2d_array
 
 
-def measure_sigma2(d: DiffusiveSIR, t_max: int, start: int = 0, end: int = None):
+def measure_sigma2(d: DiffusiveSIR, t_max: int, start: float = 0, end: float = None):
     """
     Measure variance for the system, starting in the origin.
     t_max, start and end must be in days.
@@ -35,13 +35,13 @@ def measure_sigma2(d: DiffusiveSIR, t_max: int, start: int = 0, end: int = None)
     plt.plot(
         d.sigma[sigma_start:sigma_end, 0],
         linear(d.sigma[sigma_start:sigma_end, 0], c[0]),
-        label=f"$y={float(c[0]):.2f}x$\n$r^2={r**2:.4f}$",
-        color="darkred",
+        label=f"$\sigma^2={float(c[0]):.1f}t$\n$r^2={r**2:.4f}$",
+        color="red",
     )
     plt.plot(
         d.sigma[sigma_start:sigma_end, 0],
         linear(d.sigma[sigma_start:sigma_end, 0], 2.0 * d.D),
-        label=f"$y=2D\:t$",
+        label=f"$\sigma^2=2D\:t$",
         color="darkgreen",
     )
     plt.legend()
@@ -76,8 +76,8 @@ def main(N, t_max, sigma2=False):
     plt.close()
 
     if sigma2:
-        measure_sigma2(d, d.dt * t_max, end=10)
+        measure_sigma2(d, d.dt * t_max, end=7.5)
 
 
 if __name__ == "__main__":
-    main(100, 90)
+    main(100, 90, True)
