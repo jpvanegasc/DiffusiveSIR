@@ -6,8 +6,8 @@ class DiffusiveSIR(object):
     sigma = []
     sir = []
 
-    D = 50  # m2/day
-    dt = 0.005  # day
+    D = 100  # m2/day
+    dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
     infected_prob = 0.2
@@ -28,16 +28,7 @@ class DiffusiveSIR(object):
         self.infect(int(N * infected))
 
     def initial_position(self):
-        # self.particles[:, :2] = self.L * np.random.rand(self.N, 2)
-        self.particles[:, :2] = np.array(
-            [
-                [
-                    0.5 * self.L + 0.5 * np.random.random(),
-                    0.5 * self.L + 0.5 * np.random.random(),
-                ]
-                for _ in range(self.N)
-            ]
-        )
+        self.particles[:, :2] = self.L * np.random.rand(self.N, 2)
 
     def infect(self, infected: int):
         for _ in range(infected):
@@ -87,29 +78,20 @@ class DiffusiveSIR(object):
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
 
-    def evolve(self, t_max: int):
-        const = np.sqrt(2.0 * self.D * self.dt)
+    def measure_sigma2(self, t_max: int):
+        L = 100.0
+        self.particles[:, :2] = np.array([[0.5 * L, 0.5 * L] for _ in range(self.N)])
 
-        self.sir = np.zeros((t_max, 3))
+        const = np.sqrt(self.D * self.dt)
 
         for t in range(t_max):
-            # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2))
-            self.particles[:, :2] += dx + self.L
-            self.particles[:, :2] %= self.L
-
-            # s, i, r = self.get_indices_by_health()
-
-            # self.check_infected(s, i)
-            # self.add_infected_time()
-
-            # self.check_recovered()
-
-            # Commented because an 'if' is computationally expensive
             sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
             self.sigma.append([self.dt * t, sigma_x**2 + sigma_y**2])
 
-            # self.sir[t] = [len(s), len(i), len(r)]
+            # Move with periodic boundaries
+            dx = np.random.normal(0, const, size=(self.N, 2))
+            self.particles[:, :2] += dx + L
+            self.particles[:, :2] %= L
 
             progress = int(50 * t / t_max)
             missing = int(50 - progress)
@@ -118,3 +100,28 @@ class DiffusiveSIR(object):
         print(f"0% [{'#'*50}] 100%")
 
         self.sigma = np.array(self.sigma)
+
+    def evolve(self, t_max: int):
+        const = np.sqrt(self.D * self.dt)
+
+        self.sir = np.zeros((t_max, 3))
+
+        for t in range(t_max):
+            # Move with periodic boundaries
+            dx = np.random.normal(0, const, size=(self.N, 2))
+            self.particles[:, :2] += dx + self.L
+            self.particles[:, :2] %= self.L
+
+            s, i, r = self.get_indices_by_health()
+
+            self.check_infected(s, i)
+            self.add_infected_time()
+            self.check_recovered()
+
+            self.sir[t] = [len(s), len(i), len(r)]
+
+            progress = int(50 * t / t_max)
+            missing = int(50 - progress)
+            print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
+
+        print(f"0% [{'#'*50}] 100%")
