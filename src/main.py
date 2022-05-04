@@ -38,7 +38,7 @@ if __name__ == "__main__":
     iprom= np.zeros(9000)
     rprom = np.zeros(9000)
     sickprom = np.zeros(9000)
-    j = 10
+    j = 1
     for _ in range (j):
         x, y = main(100, 90)
         sprom += x[:,0]

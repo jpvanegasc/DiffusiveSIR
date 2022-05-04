@@ -1,4 +1,5 @@
 import numpy as np
+import random as rnd
 
 
 class DiffusiveSIR(object):
@@ -80,6 +81,19 @@ class DiffusiveSIR(object):
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
 
+    def gasdev(self):
+        g = 0
+        while g == 0:
+            v1 = 2.*rnd.random()-1.
+            v2 = 2.*rnd.random()-1.
+            r = v1**2 + v2**2
+            if r <= 1. and r !=0:
+                fac = np.sqrt(-2.*np.log(r)/r)
+                gx = v1*fac
+                gy = v2*fac
+                g = 1
+        return gx,gy
+
     def evolve(self, t_max: int):
         sigma = 2.0 * self.D * self.dt
         const = np.sqrt(sigma)
@@ -88,9 +102,14 @@ class DiffusiveSIR(object):
         daniel = 1/(np.sqrt(4*np.pi*self.D*self.dt))
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = const * np.random.normal(size=(self.N, 2)) *daniel
+            dx = const * np.random.normal(size=(self.N, 2)) * daniel
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
+            #self.particles[:,:2] = abs(self.particles[:,:2] + dx)
+
+            # for ii in range(self.N):
+            #     if(self.particles[ii, 0] >= self.L): self.particles[ii, 0] -= 2*const*dr[0]*daniel
+            #     if(self.particles[ii, 1] >= self.L): self.particles[ii, 1] -= 2*const*dr[1]*daniel
 
             s, i, r, ns = self.get_indices_by_health()
 
