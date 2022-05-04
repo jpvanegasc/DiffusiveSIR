@@ -82,14 +82,14 @@ class DiffusiveSIR(object):
         L = 100.0
         self.particles[:, :2] = np.array([[0.5 * L, 0.5 * L] for _ in range(self.N)])
 
-        const = np.sqrt(self.D * self.dt)
+        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
 
         for t in range(t_max):
             sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
             self.sigma.append([self.dt * t, sigma_x**2 + sigma_y**2])
 
             # Move with periodic boundaries
-            dx = np.random.normal(0, const, size=(self.N, 2))
+            dx = np.random.normal(0, sigma, size=(self.N, 2))
             self.particles[:, :2] += dx + L
             self.particles[:, :2] %= L
 
@@ -102,13 +102,13 @@ class DiffusiveSIR(object):
         self.sigma = np.array(self.sigma)
 
     def evolve(self, t_max: int):
-        const = np.sqrt(self.D * self.dt)
+        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
 
         self.sir = np.zeros((t_max, 3))
 
         for t in range(t_max):
             # Move with periodic boundaries
-            dx = np.random.normal(0, const, size=(self.N, 2))
+            dx = np.random.normal(0, sigma, size=(self.N, 2))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
 
