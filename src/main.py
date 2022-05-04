@@ -76,7 +76,7 @@ def main(N, t_max, sigma2=False):
     plt.close()
 
     if sigma2:
-        measure_sigma2(d, t_max)
+        measure_sigma2(d, d.dt * t_max, end=10)
 
 
 if __name__ == "__main__":
