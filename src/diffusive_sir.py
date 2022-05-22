@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sympy import Q
 
 from plot import plot_particles
 
@@ -115,6 +116,7 @@ class DiffusiveSIR(object):
                 t1 = t * self.dt
                 t2 = t + 100000
                 self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
+<<<<<<< HEAD
 
             dx = const * np.random.normal(size=(self.N, 2))#*(1/Daniel)
             #dy = const * np.random.normal(size=(self.N, 1))
@@ -122,6 +124,17 @@ class DiffusiveSIR(object):
             self.particles[:, :2] %= self.L
             # self.particles[:, 1:2] += dy + self.L
             # self.particles[:, 1:2] %= self.L
+=======
+            """
+            dx = const * np.random.normal(size=(self.N, 2)) #*(1/Daniel)
+            #self.particles[:, :2] += dx + self.L
+            #self.particles[:, :2] %= self.L
+            self.particles[:, :2] = abs( self.particles[:, :2] + dx)
+
+            for ii in range(self.N):
+                if(self.particles[ii, 0]): self.particles[ii, 0] -= 2*dx[ii, 0]
+                if(self.particles[ii, 1]): self.particles[ii, 1] -= 2*dx[ii, 1]
+>>>>>>> c6f60e0712e9a9c87a019f371857c6bbec06b607
 
             s, i, r, ns = self.get_indices_by_health()
 
