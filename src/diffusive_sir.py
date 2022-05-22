@@ -102,21 +102,21 @@ class DiffusiveSIR(object):
 
     def evolve(self, t_max: int):
         mu, sigma = 0.0, 2.0 * self.D * self.dt
-        const = np.sqrt(sigma)
+        variance = np.sqrt(sigma)
+        const = np.sqrt(variance)
         Daniel = 2 * np.sqrt(np.pi)
 
         self.sir = np.zeros((t_max, 4))
-        #marker_size = 23 * np.exp(-0.0005 * self.N) + 7
+        marker_size = 23 * np.exp(-0.0005 * self.N) + 7
 
         for t in range(t_max):
             # Move with periodic boundaries
-            """
             if t%4 == 0 :   #create the gif of infection spread
                 t1 = t * self.dt
                 t2 = t + 100000
                 self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
-            """
-            dx = const * np.random.normal(size=(self.N, 2))*(1/Daniel)
+
+            dx = const * np.random.normal(size=(self.N, 2))#*(1/Daniel)
             #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L

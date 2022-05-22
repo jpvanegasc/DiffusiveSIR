@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
 
-N = 100
+N = 1000
 d = DiffusiveSIR(N, 0.01, 0.012)
 
 #def MSD():
@@ -50,10 +50,14 @@ def ensemble_average_MSD(d, Nstep):
     for t in range(Nstep):
         dx = const * np.random.normal(size=(d.N, 2))*(1/Daniel)
         dx = np.array(dx)
-        X[:,:] += dx
+        X[:,:] = abs(X[:,:] + dx)
 
-        if(X[:, 0] >= d.L).all(): X[kk][0] -= 2 * dx[kk][0]
-        if(X[:, 1] >= d.L).all(): X[kk][1] -= 2 * dx[kk][1]
+        # if(X[:, 0] >= d.L).any(): X[kk][0] -= 2 * dx[kk][0]
+        # if(X[:, 1] >= d.L).any(): X[kk][1] -= 2 * dx[kk][1]
+
+        for kk in range(d.N):
+            if(X[0][kk, 0] >= d.L) : X[0][kk, 0] -= 2 * dx[kk][0]
+            if(X[0][kk, 1] >= d.L) : X[0][kk, 1] -= 2 * dx[kk][1]
 
     XN = X[0]
 
@@ -67,8 +71,9 @@ def ensemble_average_MSD(d, Nstep):
 # print("R0 = ", R0)
 # print("RN = ", RN)
 
-tMSD, RX, RY = time_average_MSD(d, 1000)
-eMSD, R0, RN = ensemble_average_MSD(d, 1000)
+Nsteps = 10000
+tMSD, RX, RY = time_average_MSD(d, Nsteps)
+eMSD, R0, RN = ensemble_average_MSD(d, Nsteps)
 print(tMSD)
 print(eMSD)
 err = abs(tMSD - eMSD)/(tMSD)
@@ -78,7 +83,12 @@ plt.figure(1)
 plt.scatter(R0[:,0], R0[:,1],  color = "red" , label = 'Initial' )
 plt.scatter(RN[:,0], RN[:,1], color = "green" , label = 'Final' )
 
+x0, y0 = RX[0] , RY[0]
+xn, yn = RX[Nsteps-1] , RY[Nsteps-1]
+# print(len(RX), len(RY))
 plt.figure(2)
+plt.scatter(x0, y0, color = 'red' , label = "start point")
+plt.scatter(xn, yn, color = 'green' , label = "rest point")
 plt.plot(RX, RY, color='cyan', label='Camino aleatorio')
 plt.legend()
 plt.show()

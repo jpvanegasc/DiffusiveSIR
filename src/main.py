@@ -13,16 +13,16 @@ def main(N, t_max):
     t_max = int(t_max/d.dt)
 
     # Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
-    marker_size = 23 * np.exp(-0.0005 * N) + 7
+    #marker_size = 23 * np.exp(-0.0005 * N) + 7
 
-    plot_timestep(d, "../data/initial.png", "m", "m", "initial positions", marker_size)
+    #plot_timestep(d, "../data/initial.png", "m", "m", "initial positions", marker_size)
 
     d.evolve(t_max)
 
-    plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
+    #plot_timestep(d, "../data/final.png", "m", "m", "final positions", marker_size)
 
-    #print("Wait a minute.... GIF in process...")
-    #make_gif('../data/gif/' , '../data/spread.gif')
+    print("Wait a minute.... GIF in process...")
+    make_gif('../data/gif/' , '../data/spread.gif')
 
     t = d.dt * np.arange(t_max)
 
@@ -37,4 +37,4 @@ def main(N, t_max):
 
 
 if __name__ == "__main__":
-    main(100, 45)
+    main(100, 50)
