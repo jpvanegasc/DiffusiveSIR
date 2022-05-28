@@ -36,6 +36,13 @@ def plot_timestep(diffusive_sir, filename, xlabel="", ylabel="", title="", size=
     plt.savefig(filename)
     plt.close()
 
+def save_2d_array(array: np.array, filename, header=None):
+    with open(filename, "w+") as f:
+        if header:
+            f.write(header.strip() + "\n")
+        for line in array:
+            f.write(",".join(map(lambda x: str(x), line)) + "\n")
+
 def make_gif(path, filename):
     # data base localization
     #path = path #path where the images are saved

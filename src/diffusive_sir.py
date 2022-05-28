@@ -84,6 +84,29 @@ class DiffusiveSIR(object):
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
 
+    def measure_sigma2(self, t_max: int):
+        L = 100.0
+        self.particles[:, :2] = np.array([[0.5 * L, 0.5 * L] for _ in range(self.N)])
+
+        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
+
+        for t in range(t_max):
+            sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
+            self.sigma.append([self.dt * t, sigma_x**2 + sigma_y**2])
+
+            # Move with periodic boundaries
+            dx = np.random.normal(0, sigma, size=(self.N, 2))
+            self.particles[:, :2] += dx + L
+            self.particles[:, :2] %= L
+
+            progress = int(50 * t / t_max)
+            missing = int(50 - progress)
+            print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
+
+        print(f"0% [{'#'*50}] 100%")
+
+        self.sigma = np.array(self.sigma)
+
     def plot_timestep(self, filename: str , xlabel: str, ylabel: str, title: str, size=10):
         colors = list(
             map(lambda h: self.get_health_color(h), self.particles[:, 2])
@@ -102,10 +125,7 @@ class DiffusiveSIR(object):
         plt.close()
 
     def evolve(self, t_max: int):
-        mu, sigma = 0.0, 2.0 * self.D * self.dt
-        variance = np.sqrt(sigma)
-        const = np.sqrt(variance)
-        Daniel = 2 * np.sqrt(np.pi)
+        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
 
         self.sir = np.zeros((t_max, 4))
         marker_size = 23 * np.exp(-0.0005 * self.N) + 7
@@ -116,15 +136,14 @@ class DiffusiveSIR(object):
                 t1 = t * self.dt
                 t2 = t + 100000
                 self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
-<<<<<<< HEAD
 
-            dx = const * np.random.normal(size=(self.N, 2))#*(1/Daniel)
+            dx = np.random.normal(0, sigma, size=(self.N, 2))#*(1/Daniel)
             #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
             # self.particles[:, 1:2] += dy + self.L
             # self.particles[:, 1:2] %= self.L
-=======
+
             """
             dx = const * np.random.normal(size=(self.N, 2)) #*(1/Daniel)
             #self.particles[:, :2] += dx + self.L
@@ -134,13 +153,12 @@ class DiffusiveSIR(object):
             for ii in range(self.N):
                 if(self.particles[ii, 0]): self.particles[ii, 0] -= 2*dx[ii, 0]
                 if(self.particles[ii, 1]): self.particles[ii, 1] -= 2*dx[ii, 1]
->>>>>>> c6f60e0712e9a9c87a019f371857c6bbec06b607
+            """
 
             s, i, r, ns = self.get_indices_by_health()
 
             self.check_infected(s, i)
             self.add_infected_time()
-
             self.check_recovered()
 
             # Commented because an 'if' is computationally expensive
@@ -154,5 +172,3 @@ class DiffusiveSIR(object):
             print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
 
         print(f"0% [{'#'*50}] 100%")
-
-        self.sigma = np.array(self.sigma)
