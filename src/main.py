@@ -38,7 +38,7 @@ if __name__ == "__main__":
     iprom= np.zeros(9000)
     rprom = np.zeros(9000)
     sickprom = np.zeros(9000)
-    j = 1
+    j = 10
     for _ in range (j):
         x, y = main(100, 90)
         sprom += x[:,0]
@@ -59,3 +59,26 @@ if __name__ == "__main__":
     plt.close()
     plt.yscale("log")
     fit (y,sickprom)
+    max_sus = max(sprom)
+    max_inf = max(sickprom)
+    max_rec = max(rprom) 
+    max_enfer = max(iprom)
+    def indice(vec, max):
+        for i in range (len(vec)):
+            if vec[i] == max:
+                s = i
+                break
+            else:
+                continue
+        return s
+    a = indice(iprom, max_enfer)
+    b = indice(sprom, max_sus)
+    c = indice(rprom, max_rec)
+    d = indice(sickprom, max_inf)
+    print (y[b],b)
+    print(y[d],d)
+    print(y[c],c)
+    print(y[a],a)
+    #print(max_enfer,max_inf, max_rec, max_sus)
+   
+   
