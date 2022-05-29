@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import Q
 
 from plot import plot_particles
 
@@ -84,29 +83,6 @@ class DiffusiveSIR(object):
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
 
-    def measure_sigma2(self, t_max: int):
-        L = 100.0
-        self.particles[:, :2] = np.array([[0.5 * L, 0.5 * L] for _ in range(self.N)])
-
-        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
-
-        for t in range(t_max):
-            sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)
-            self.sigma.append([self.dt * t, sigma_x**2 + sigma_y**2])
-
-            # Move with periodic boundaries
-            dx = np.random.normal(0, sigma, size=(self.N, 2))
-            self.particles[:, :2] += dx + L
-            self.particles[:, :2] %= L
-
-            progress = int(50 * t / t_max)
-            missing = int(50 - progress)
-            print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
-
-        print(f"0% [{'#'*50}] 100%")
-
-        self.sigma = np.array(self.sigma)
-
     def plot_timestep(self, filename: str , xlabel: str, ylabel: str, title: str, size=10):
         colors = list(
             map(lambda h: self.get_health_color(h), self.particles[:, 2])
@@ -125,19 +101,24 @@ class DiffusiveSIR(object):
         plt.close()
 
     def evolve(self, t_max: int):
-        sigma = np.sqrt(2.0 * self.D * self.dt) / np.sqrt(2)
+        sigma = 2.0 * self.D * self.dt
+        const = np.sqrt(sigma) / np.sqrt(2)
+        f_o = np.sqrt(2) * 0.348
+        # f_o = 0.5
 
         self.sir = np.zeros((t_max, 4))
         marker_size = 23 * np.exp(-0.0005 * self.N) + 7
 
         for t in range(t_max):
             # Move with periodic boundaries
+            """
             if t%4 == 0 :   #create the gif of infection spread
                 t1 = t * self.dt
                 t2 = t + 100000
                 self.plot_timestep("../data/gif/"+ str(t2) +".png", "m", "m", "Position at "+str(t1)+" days", marker_size)
+            """
 
-            dx = np.random.normal(0, sigma, size=(self.N, 2))#*(1/Daniel)
+            dx = f_o * const * np.random.normal(size=(self.N, 2))
             #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L

@@ -2,56 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from diffusive_sir import DiffusiveSIR
-from plot import plot_timestep, save_2d_array
+from plot import plot_timestep, save_2d_array, LinearR
 
-
-def measure_sigma2(d: DiffusiveSIR, t_max: int, start: float = 0, end: float = None):
-    """
-    Measure variance for the system, starting in the origin.
-    t_max, start and end must be in days.
-    """
-    from scipy import stats
-    import scipy.optimize as opt
-
-    linear = lambda x, a: a * x
-
-    t_max = int(t_max / d.dt)
-    sigma_start = int(start / d.dt)
-    sigma_end = int(end / d.dt) if end else t_max
-
-    d.measure_sigma2(t_max)
-
-    c = opt.curve_fit(
-        linear, d.sigma[sigma_start:sigma_end, 0], d.sigma[sigma_start:sigma_end, 1], 1
-    )
-
-    r = stats.linregress(
-        d.sigma[sigma_start:sigma_end, 0], d.sigma[sigma_start:sigma_end, 1]
-    )[2]
-
-    save_2d_array(d.sigma, f"../data/sigma_D{d.D}.csv", header="t,sigma2")
-
-    plt.plot(d.sigma[:, 0], d.sigma[:, 1], color="black")
-    plt.plot(
-        d.sigma[sigma_start:sigma_end, 0],
-        linear(d.sigma[sigma_start:sigma_end, 0], c[0]),
-        label=f"$\sigma^2={float(c[0]):.1f}t$\n$r^2={r**2:.4f}$",
-        color="red",
-    )
-    plt.plot(
-        d.sigma[sigma_start:sigma_end, 0],
-        linear(d.sigma[sigma_start:sigma_end, 0], 2.0 * d.D),
-        label=f"$\sigma^2=2D\:t$",
-        color="darkgreen",
-    )
-    plt.legend()
-    plt.xlabel(r"$t$")
-    plt.ylabel(r"$\sigma^2$ (m)")
-    plt.savefig(f"../data/sigma_D{d.D}.png")
-    plt.close()
-
-
-def main(N, t_max, sigma2=False):
+def main(N, t_max):
     """Run the simulation. N number of individuals, t_max number of days"""
     d = DiffusiveSIR(N, 0.01, 0.012)
 
@@ -79,9 +32,68 @@ def main(N, t_max, sigma2=False):
     plt.savefig("../data/sir.png")
     plt.close()
 
-    #if sigma2:
-        # measure_sigma2(d, d.dt * t_max, end=7.5)
+    return d.sir , t
+
+def average(N, t_max, ave):
+    size = N * t_max
+    sprom, iprom = np.zeros(size), np.zeros(size)
+    rprom, sickprom = np.zeros(size), np.zeros(size)
+
+    def indice(vec, max):
+        for i in range (len(vec)):
+            if vec[i] == max:
+                s = i
+                break
+            else:
+                continue
+        return s
+
+    for _ in range(ave):
+        x, y = main(N, t_max)
+        sprom += x[:, 0]
+        iprom += x[:,1]
+        rprom += x[:,2]
+        sickprom += x[:,3]
+    sprom, iprom = sprom / ave , iprom / ave
+    rprom, sickprom = rprom / ave , sickprom / ave
+
+    plt.figure(1)
+    plt.plot(y,sprom, color = "black")
+    plt.plot(y,iprom, color = "cyan")
+    plt.plot(y,rprom, color = "magenta")
+    plt.plot(y, sickprom, color ="green")
+    plt.xlabel("$t$ días")
+    plt.ylabel("Poblacion promedio")
+    plt.savefig("../data/prom.png")
+    plt.close()
+    # plt.yscale("log")
+    # fit (y,sickprom)
+    max_sus = max(sprom)
+    max_inf = max(sickprom)
+    max_rec = max(rprom)
+    max_enfer = max(iprom)
+
+    a = indice(iprom, max_enfer)
+    b = indice(sprom, max_sus)
+    c = indice(rprom, max_rec)
+    d = indice(sickprom, max_inf)
+    # print (y[b],b)
+    # print(y[d],d)
+    # print(y[c],c)
+    # print(y[a],a)
+    Y = np.log(sickprom)
+    coeff = LinearR(y[:501], Y[:501])
+    m , b = coeff[2] , coeff[0]
+    print("m = " , m , "b = ", b)
+    plt.figure(2)
+    plt.plot(y, Y, color = "green")
+    plt.xlabel("$t$ días")
+    plt.ylabel("Poblacion promedio")
+    z = m * y[:501] + b
+    plt.plot(y[:501], z, color = "red")
+    plt.savefig("../data/fit.png")
+    plt.close()
 
 
 if __name__ == "__main__":
-    main(100, 50, True)
+    average(100, 90 , 10)

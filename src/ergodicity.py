@@ -52,21 +52,18 @@ def ensemble_average_MSD(d, Nstep):
         dx = np.array(dx)
         X[:,:] = abs(X[:,:] + dx)
 
-<<<<<<< HEAD
         # if(X[:, 0] >= d.L).any(): X[kk][0] -= 2 * dx[kk][0]
         # if(X[:, 1] >= d.L).any(): X[kk][1] -= 2 * dx[kk][1]
 
-        for kk in range(d.N):
-            if(X[0][kk, 0] >= d.L) : X[0][kk, 0] -= 2 * dx[kk][0]
-            if(X[0][kk, 1] >= d.L) : X[0][kk, 1] -= 2 * dx[kk][1]
-=======
+        # for kk in range(d.N):
+        #     if(X[0][kk, 0] >= d.L) : X[0][kk, 0] -= 2 * dx[kk][0]
+        #     if(X[0][kk, 1] >= d.L) : X[0][kk, 1] -= 2 * dx[kk][1]
         #if(X[:, 0] >= d.L).all(): X[kk][0] -= 2 * dx[kk][0]
         #if(X[:, 1] >= d.L).all(): X[kk][1] -= 2 * dx[kk][1]
 
         for kk in range(d.N):
             if(X[0][kk, 0] >= d.L): X[0][kk, 0] -= 2 * dx[kk, 0]
             if(X[0][kk, 1] >= d.L): X[0][kk, 1] -= 2 * dx[kk, 1]
->>>>>>> c6f60e0712e9a9c87a019f371857c6bbec06b607
 
     XN = X[0]
 
