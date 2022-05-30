@@ -105,7 +105,7 @@ class DiffusiveSIR(object):
 
             # Para New York
             #dx = const * np.random.normal(size=(self.N, 2)) * 0.35
-            dx = const * np.random.normal(size=(self.N, 2)) * 0.348
+            dx = const * np.random.normal(size=(self.N, 2)) *0.352
 
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L

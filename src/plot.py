@@ -41,9 +41,9 @@ def fit(a,b):
         m = []
         fit = np. polyfit (l, np.log (l1), 1)
         print(fit)
-        for i in range (501):
+        for i in range (801):
             m.append( np.exp(fit[1] + fit[0]*l[i]))
-        l = l[:501]
+      
         plt.plot(l, m, color ="red")
         plt.plot(a,b,color="green")
         plt.savefig("../data/fit.png")
