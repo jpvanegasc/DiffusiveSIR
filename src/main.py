@@ -35,7 +35,8 @@ def main(N, t_max):
     return d.sir , t
 
 def average(N, t_max, ave):
-    size = N * t_max
+    d = DiffusiveSIR(N, 0.01, 0.012)
+    size = int (t_max / d.dt)
     sprom, iprom = np.zeros(size), np.zeros(size)
     rprom, sickprom = np.zeros(size), np.zeros(size)
 
@@ -98,4 +99,4 @@ def average(N, t_max, ave):
 
 
 if __name__ == "__main__":
-    average(100, 90 , 10)
+    average(1000, 90 , 10)
