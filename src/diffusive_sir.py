@@ -7,17 +7,20 @@ class DiffusiveSIR(object):
     health_time = {}
     sigma = []
     sir = []
+    confined_Time = {}
 
     D = 100 # m2/day
     dt = 0.01  # day
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
     infected_prob = 0.2
+    confined_time = 5.0 #days
 
     mapping = {
         0: "darkgreen",  # susceptible
         1: "darkred",  # infected
         2: "orange",  # recovered
+        3: "blue",  # confined
     }
 
     def __init__(self, N: int, infected: float, density: float):
@@ -73,6 +76,16 @@ class DiffusiveSIR(object):
                     self.health_time[i] = 0.0
                     break
 
+    def confined(self, infected):
+        P_infected = len(infected) / self.N
+        P_confined = 0.3
+        if (P_infected >= 0.1):
+            k = int(len(infected) * P_confined)
+            for _ in range(k):
+                i = np.random.randint(0, len(infected))
+                ii = infected[i]
+                self.particles[ii, 2] = 3
+
     def add_infected_time(self):
         for i in self.health_time:
             self.health_time[i] += self.dt
@@ -82,6 +95,16 @@ class DiffusiveSIR(object):
             if v >= self.recovery_time:
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
+
+    def add_confined_time(self):
+        for i in self.confined_Time:
+            self.confined_Time[i] += self.dt
+
+    def check_restraint(self):
+        for i, t in list(self.confined_Time.items()):
+            if t >= self.confined_time:
+                self.particles[i, 2] = 2
+                self.confined_Time.pop(i)
 
     def plot_timestep(self, filename: str , xlabel: str, ylabel: str, title: str, size=10):
         colors = list(
@@ -141,6 +164,11 @@ class DiffusiveSIR(object):
             self.check_infected(s, i)
             self.add_infected_time()
             self.check_recovered()
+
+            if (t > 1000):
+                self.confined(i)
+                self.add_confined_time()
+                self.check_restraint()
 
             # Commented because an 'if' is computationally expensive
             # sigma_x, sigma_y = np.std(self.particles[:, :2], axis=0)

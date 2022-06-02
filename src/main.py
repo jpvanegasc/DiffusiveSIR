@@ -99,4 +99,4 @@ def average(N, t_max, ave):
 
 
 if __name__ == "__main__":
-    average(1000, 90 , 10)
+    average(100, 90 , 1)
