@@ -11,16 +11,21 @@ class DiffusiveSIR(object):
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
     infected_prob = 0.2
+    confinement_time = 1.0  # day
 
     mapping = {
         0: "darkgreen",  # susceptible
         1: "darkred",  # infected
         2: "orange",  # recovered
+        3: "darkred",  # infected & confined
     }
 
-    def __init__(self, N: int, infected: float, density: float):
+    def __init__(
+        self, N: int, infected: float, density: float, confinement: float = 0.1
+    ):
         self.N = N
         self.L = np.sqrt(N / density)
+        self.L_conf = self.L * confinement
 
         self.particles = np.zeros((N, 3))  # (x,y,health)
 
@@ -39,6 +44,7 @@ class DiffusiveSIR(object):
                     self.particles[i, 2] = 1
                     flag = False
 
+    @classmethod
     def get_health_color(self, health: int):
         return self.mapping.get(health, "black")
 
@@ -50,7 +56,7 @@ class DiffusiveSIR(object):
         for i in range(self.N):
             if self.particles[i, 2] == 0:
                 susceptible.append(i)
-            elif self.particles[i, 2] == 1:
+            elif self.particles[i, 2] in (1, 3):
                 infected.append(i)
             else:
                 recovered.append(i)
@@ -77,6 +83,8 @@ class DiffusiveSIR(object):
             if v >= self.recovery_time:
                 self.particles[i, 2] = 2
                 self.health_time.pop(i)
+            elif v > self.confinement_time:
+                self.particles[i, 2] = 3
 
     def measure_sigma2(self, t_max: int):
         L = 100.0
@@ -107,10 +115,16 @@ class DiffusiveSIR(object):
         self.sir = np.zeros((t_max, 3))
 
         for t in range(t_max):
-            # Move with periodic boundaries
+            # Move with periodic boundaries & confinement
             dx = np.random.normal(0, sigma, size=(self.N, 2))
-            self.particles[:, :2] += dx + self.L
-            self.particles[:, :2] %= self.L
+            self.particles[:, :2] += dx
+            for i in range(self.N):
+                if self.particles[i, 2] != 3:
+                    self.particles[i, :2] += self.L
+                    self.particles[:, :2] %= self.L
+                else:
+                    self.particles[i, :2] += self.L_conf
+                    self.particles[:, :2] %= self.L_conf
 
             s, i, r = self.get_indices_by_health()
 

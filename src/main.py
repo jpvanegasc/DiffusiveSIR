@@ -80,4 +80,4 @@ def main(N, t_max, sigma2=False):
 
 
 if __name__ == "__main__":
-    main(100, 90, True)
+    main(100, 90)
