@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 
 
@@ -21,11 +23,18 @@ class DiffusiveSIR(object):
     }
 
     def __init__(
-        self, N: int, infected: float, density: float, confinement: float = 0.1
+        self,
+        N: int,
+        infected: float,
+        density: float,
+        confinement: Union[bool, float] = False,
     ):
         self.N = N
         self.L = np.sqrt(N / density)
-        self.L_conf = self.L * confinement
+        if confinement:
+            self.L_conf = self.L * confinement
+        else:
+            self.L_conf = self.L
 
         self.particles = np.zeros((N, 3))  # (x,y,health)
 
@@ -121,10 +130,10 @@ class DiffusiveSIR(object):
             for i in range(self.N):
                 if self.particles[i, 2] != 3:
                     self.particles[i, :2] += self.L
-                    self.particles[:, :2] %= self.L
+                    self.particles[i, :2] %= self.L
                 else:
                     self.particles[i, :2] += self.L_conf
-                    self.particles[:, :2] %= self.L_conf
+                    self.particles[i, :2] %= self.L_conf
 
             s, i, r = self.get_indices_by_health()
 
