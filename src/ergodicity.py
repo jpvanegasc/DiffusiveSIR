@@ -26,7 +26,7 @@ def time_average_MSD(d, Nstep):
     return  tMSD, Path
 
 def ensemble_average_MSD(d, Nstep):
-    X0 = d.particles[:, :2]
+    R0 = d.particles[:, :2].copy()
     mu, sigma = 0.0, 2.0 * d.D * d.dt
     const = np.sqrt(sigma) / np.sqrt(2)
     msd = 0
@@ -37,21 +37,21 @@ def ensemble_average_MSD(d, Nstep):
         for r in range(d.N):
             if(d.particles[r, 0] >= d.L or d.particles[r, 1] >= d.L):
                 d.particles[r, :2] -= 2 * dx[r]
-
-    XF = d.particles[:, :2]
+        
+    RF = d.particles[:, :2]
 
     for ii in range(d.N):
-        norm = np.linalg.norm(XF[ii] - X0[ii])
+        norm = np.linalg.norm(RF[ii] - R0[ii])
         msd += norm ** 2
 
     eMSD = msd / (d.N * Nstep)
-    return eMSD , X0, XF
+    return eMSD , R0, RF
 
-N = 1000
+N = 100
 d = DiffusiveSIR(N, 0.01, 0.012)
 Nsteps = 10000
 tMSD, Path = time_average_MSD(d, Nsteps)
-eMSD, R0, RF = ensemble_average_MSD(d, Nsteps)
+eMSD, R0, RF  = ensemble_average_MSD(d, Nsteps) 
 print(tMSD)
 print(eMSD)
 err = abs(tMSD - eMSD)/(tMSD)
@@ -64,8 +64,8 @@ plt.legend()
 
 x0, xf = Path[0], Path[Nsteps - 1]
 plt.figure(2)
+plt.plot(Path[:, 0], Path[:, 1], color='cyan', label='Camino aleatorio')
 plt.scatter(x0[0], x0[1], color = 'red' , label = "Posición inicial")
 plt.scatter(xf[0], xf[1], color = 'green' , label = "Posición Final")
-plt.plot(Path[:, 0], Path[:, 1], color='cyan', label='Camino aleatorio')
 plt.legend()
 plt.show()
