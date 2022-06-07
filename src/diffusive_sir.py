@@ -104,7 +104,6 @@ class DiffusiveSIR(object):
         sigma = 2.0 * self.D * self.dt
         const = np.sqrt(sigma) / np.sqrt(2)
         f_o = np.sqrt(2) * 0.348
-        # f_o = 0.5
 
         self.sir = np.zeros((t_max, 4))
         marker_size = 23 * np.exp(-0.0005 * self.N) + 7
@@ -119,11 +118,8 @@ class DiffusiveSIR(object):
             """
 
             dx = f_o * const * np.random.normal(size=(self.N, 2))
-            #dy = const * np.random.normal(size=(self.N, 1))
             self.particles[:, :2] += dx + self.L
             self.particles[:, :2] %= self.L
-            # self.particles[:, 1:2] += dy + self.L
-            # self.particles[:, 1:2] %= self.L
 
             """
             dx = const * np.random.normal(size=(self.N, 2)) #*(1/Daniel)
