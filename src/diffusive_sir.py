@@ -108,8 +108,7 @@ class DiffusiveSIR(object):
 
     def check_restraint(self):
         for i, t in list(self.confined_Time.items()):
-            if ( t >= self.confined_time 
-                and self.particles[i, 2] == 3 ):
+            if ( t >= self.confined_time and self.particles[i, 2] == 3 ):
                 self.particles[i, 2] = 1
                 self.confined_Time.pop(i)
 
