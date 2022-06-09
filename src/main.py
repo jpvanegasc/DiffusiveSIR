@@ -83,20 +83,20 @@ def average(N, t_max, ave):
     # print(y[c],c)
     # print(y[a],a)
     Y = np.log(sickprom)
-    coeff = LinearR(y[:501], Y[:501])
+    coeff = LinearR(y[:701], Y[:701])
     m , b = coeff[2] , coeff[0]
     print("m = " , m , "b = ", b)
     plt.figure(2)
     plt.plot(y, Y, color = "green", label = 'Curva de infectados')
     plt.xlabel("$t$ días")
     plt.ylabel("Poblacion promedio")
-    z = m * y[:501] + b
+    z = m * y[:1001] + b
     m , b = str(m), str(b)
-    plt.plot(y[:501], z, color = "red", label = "$s(t) =$ "+m[:m.find(".")+3]+"$*t + $" + b[:b.find(".")+3])
+    plt.plot(y[:1001], z, color = "red", label = "$s(t) =$ "+m[:m.find(".")+3]+"$*t + $" + b[:b.find(".")+3])
     plt.legend()
     plt.savefig("../data/fit.png")
     plt.close()
 
 
 if __name__ == "__main__":
-    average(100, 90 , 1)
+    average(100, 90 , 50)

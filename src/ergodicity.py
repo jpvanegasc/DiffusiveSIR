@@ -25,47 +25,56 @@ def time_average_MSD(d, Nstep):
     tMSD = msd / Nstep
     return  tMSD, Path
 
-def ensemble_average_MSD(d, Nstep):
-    R0 = d.particles[:, :2].copy()
+def ensemble_average_MSD(d):
+    X0 = d.particles[:, :2].copy()
     mu, sigma = 0.0, 2.0 * d.D * d.dt
     const = np.sqrt(sigma) / np.sqrt(2)
     msd = 0
 
-    for _ in range(Nstep):
-        dx = const * np.random.normal(size=(d.N, 2))
-        d.particles[:, :2] = np.absolute(d.particles[:, :2] + dx)
-        for r in range(d.N):
-            if(d.particles[r, 0] >= d.L or d.particles[r, 1] >= d.L):
-                d.particles[r, :2] -= 2 * dx[r]
-        
-    RF = d.particles[:, :2]
+    dx = const * np.random.normal(size=(d.N, 2))
+    d.particles[:, :2] = np.absolute(d.particles[:, :2] + dx)
+    for r in range(d.N):
+        if(d.particles[r, 0] >= d.L or d.particles[r, 1] >= d.L):
+            d.particles[r, :2] -= 2 * dx[r]
+
+    XF = d.particles[:, :2]
 
     for ii in range(d.N):
-        norm = np.linalg.norm(RF[ii] - R0[ii])
+        norm = np.linalg.norm(XF[ii] - X0[ii])
         msd += norm ** 2
 
-    eMSD = msd / (d.N * Nstep)
-    return eMSD , R0, RF
+    eMSD = msd / d.N
+    return eMSD , X0, XF
 
-N = 100
+def average(d, A):
+    norm = 0
+    for _ in range(A):
+        tMSD, Path = time_average_MSD(d, Nsteps)
+        x0, xf = Path[0], Path[Nsteps - 1]
+        norm += np.linalg.norm(xf - x0)
+    norm = norm / A
+    porcent = norm / d.L
+    return porcent
+
+N = 100000
 d = DiffusiveSIR(N, 0.01, 0.012)
-Nsteps = 10000
+Nsteps = 1400
 tMSD, Path = time_average_MSD(d, Nsteps)
-eMSD, R0, RF  = ensemble_average_MSD(d, Nsteps) 
-print(tMSD)
-print(eMSD)
-err = abs(tMSD - eMSD)/(tMSD)
-print("error = ", err)
+eMSD, R0, RF = ensemble_average_MSD(d)
+x0, xf = Path[0], Path[Nsteps - 1]
+print(average(d, 1000))
+# print(tMSD)
+# print(eMSD)
+# err = abs(tMSD - eMSD)/(tMSD)
+# print("error = ", err)
 
 plt.figure(1)
-plt.scatter(R0[:,0], R0[:,1],  color = "green" , label = 'Initial' )
-plt.scatter(RF[:,0], RF[:,1], color = "red" , label = 'Final' )
-plt.legend()
+plt.scatter(R0[:,0], R0[:,1],  color = "green" , label = 'Posiciones iniciales' )
+plt.scatter(RF[:,0], RF[:,1], color = "red" , label = 'Posiciones finales' )
 
-x0, xf = Path[0], Path[Nsteps - 1]
-plt.figure(2)
+# plt.figure(2)
+# plt.scatter(x0[0], x0[1], color = 'red' , label = "Posición inicial")
+# plt.scatter(xf[0], xf[1], color = 'green' , label = "Posición Final")
 plt.plot(Path[:, 0], Path[:, 1], color='cyan', label='Camino aleatorio')
-plt.scatter(x0[0], x0[1], color = 'red' , label = "Posición inicial")
-plt.scatter(xf[0], xf[1], color = 'green' , label = "Posición Final")
 plt.legend()
 plt.show()
