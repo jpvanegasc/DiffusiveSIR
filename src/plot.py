@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
+import imageio as io
+import statsmodels.api as sm
 
 def plot_particles(particles: np.array, xlim=1, ylim=1, color=None, size=10):
     if isinstance(color, str):
@@ -35,10 +37,35 @@ def plot_timestep(diffusive_sir, filename, xlabel="", ylabel="", title="", size=
     plt.savefig(filename)
     plt.close()
 
-
 def save_2d_array(array: np.array, filename, header=None):
     with open(filename, "w+") as f:
         if header:
             f.write(header.strip() + "\n")
         for line in array:
             f.write(",".join(map(lambda x: str(x), line)) + "\n")
+
+def LinearR(col_1, col_2):
+    col_1 = sm.add_constant(col_1)
+    model = sm.OLS(col_2, col_1)
+    results = model.fit()
+    COEF = [results.params[0], results.bse[0], results.params[1], results.bse[1]]
+    COEF =  np.array(COEF)
+    return COEF
+
+def make_gif(path, filename):
+    # data base localization
+    #path = path #path where the images are saved
+    array_files = sorted(os.listdir(path))
+    img_array = []
+
+    #Read every file and save it into an list
+    for x in range(0, len(array_files)):
+        name_file = array_files[x]
+        path_file = path + str(name_file)
+        #print(path_file)
+        #
+        read_image = io.imread(path_file)
+        img_array.append(read_image)
+
+    #Save GIF
+    io.mimwrite(filename, img_array, 'GIF', duration=0.1)
