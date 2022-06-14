@@ -82,7 +82,7 @@ class DiffusiveSIR(object):
     def check_infected(self, susceptible, infected):
         for i in susceptible:  # Only susceptible can get infected
             for j in infected:  # Only infected can infect
-                if self.particles[j, 2] == 1:
+                if self.particles[j, 2] in (1, 3):
                     norm = np.linalg.norm(self.particles[i, :2] - self.particles[j, :2])
                     r = np.random.random()
 
