@@ -17,7 +17,7 @@ class DiffusiveSIR(object):
     recovery_time = 14.0  # day
     infected_distance = 2.0  # m
     infected_prob = 0.2
-    confinement_time = 1.0  # day
+    confinement_time = 5.0  # day
 
     mapping = {
         0: "darkgreen",  # susceptible
@@ -55,6 +55,7 @@ class DiffusiveSIR(object):
                 i = np.random.randint(0, self.N)
                 if self.particles[i, 2] != 1:
                     self.particles[i, 2] = 1
+                    self.health_time[i] = 0.0
                     flag = False
 
     @classmethod
@@ -114,6 +115,8 @@ class DiffusiveSIR(object):
 
         self.sir = np.zeros((t_max, 4))
 
+        pos = ""
+
         for t in range(t_max):
             # Move with periodic boundaries & confinement
             dx = f_o * const * np.random.normal(size=(self.N, 2))
@@ -134,8 +137,13 @@ class DiffusiveSIR(object):
 
             self.sir[t] = [len(s), len(i), len(r), len(ns)]
 
+            pos += f"{self.particles[0,0]},{self.particles[0,1]}\n"
+
             progress = int(50 * t / t_max)
             missing = int(50 - progress)
             print(f"0% [{'#'*progress}{' '*missing}] 100%", flush=True, end="\r")
+
+        with open("positions.csv", "w+") as f:
+            f.write(pos)
 
         print(f"0% [{'#'*50}] 100%")

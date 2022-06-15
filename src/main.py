@@ -6,7 +6,7 @@ from plot import plot_timestep, save_2d_array, LinearR
 
 def main(N, t_max):
     """Run the simulation. N number of individuals, t_max number of days"""
-    d = DiffusiveSIR(N, 0.01, 0.012, confinement=False)
+    d = DiffusiveSIR(N, 1., 0.012, confinement=0.1)
 
     #Approx. map 100 to 30, 1000 to 20, 10000 to 10 and inf to 7
     marker_size = 23 * np.exp(-0.0005 * N) + 7
@@ -99,4 +99,5 @@ def average(N, t_max, ave):
 
 
 if __name__ == "__main__":
-    average(100, 90 , 1)
+    # average(1000, 90 , 5)
+    main(100, 14)
